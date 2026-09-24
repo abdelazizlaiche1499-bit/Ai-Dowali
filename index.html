@@ -1,145 +1,140 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,
-               initial-scale=1.0,
-               maximum-scale=1.0,
-               user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A54 Image Switch</title>
+<title>Image Switch</title>
 
 <style>
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
+    margin: 0;
     width: 100%;
     height: 100%;
-    margin: 0;
+    overflow: hidden;
 }
 
 body {
-    background: #080808;
-
-    width: 100vw;
-    height: 100vh;
-
     display: flex;
     justify-content: center;
     align-items: center;
 
-    overflow: hidden;
+    background:
+        radial-gradient(circle at center,
+        #263b73 0%,
+        #111a3d 45%,
+        #070b1d 100%);
+
+    font-family: Arial, sans-serif;
 }
 
 /* الدائرة */
 .image-container {
-    width: 78vw;
-    height: 78vw;
-
-    max-width: 850px;
-    max-height: 850px;
+    width: min(78vw, 78vh);
+    height: min(78vw, 78vh);
 
     border-radius: 50%;
     overflow: hidden;
 
-    border: 8px solid white;
+    position: relative;
+
+    border: 4px solid rgba(255,255,255,0.25);
+
+    box-shadow:
+        0 0 25px rgba(80,130,255,0.45),
+        0 0 70px rgba(80,130,255,0.20);
 
     cursor: pointer;
 
-    box-shadow:
-        0 0 25px rgba(255,255,255,0.55),
-        0 0 70px rgba(255,255,255,0.3),
-        0 20px 80px rgba(0,0,0,0.9);
+    outline: none !important;
+    user-select: none;
 
-    transition:
-        transform 0.3s ease,
-        opacity 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+
+    isolation: isolate;
 }
 
-/* الصورة */
+/* منع المربع الأزرق عند الضغط */
+.image-container:focus,
+.image-container:focus-visible,
+.image-container:active {
+    outline: none !important;
+}
+
+/* الصور */
 .image-container img {
+    position: absolute;
+
+    inset: 0;
+
     width: 100%;
     height: 100%;
 
-    display: block;
-
     object-fit: cover;
+
+    border: none;
+    outline: none;
+
+    user-select: none;
+    -webkit-user-drag: none;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
 }
 
-/* تأثير التبديل */
-.changing {
+/* إخفاء الصورة الثانية في البداية */
+#image2 {
     opacity: 0;
 }
 
-/* ضغط */
-.image-container:active {
-    transform: scale(0.96);
+/* عند التغيير */
+.image-container.change #image1 {
+    opacity: 0;
+}
+
+.image-container.change #image2 {
+    opacity: 1;
 }
 </style>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4b6cb7">
-<link rel="apple-touch-icon" href="icon.png"></head>
+</head>
 
 <body>
 
-<div class="image-container" id="imageContainer">
+<div class="image-container" id="imageContainer" tabindex="-1">
 
     <img
-        id="mainImage"
+        id="image1"
         src="https://i.ibb.co/HJY8jVL/file-000000001f50820aa73aeb0bb2fa1902.png"
-        alt="الصورة">
+        draggable="false"
+        alt="Image 1"
+    >
+
+    <img
+        id="image2"
+        src="https://i.ibb.co/hJZjgfn6/file-00000000ced88210a9ad9ee381c6efb0.png"
+        draggable="false"
+        alt="Image 2"
+    >
 
 </div>
 
-
 <script>
+const container = document.getElementById("imageContainer");
 
-const image1 =
-"https://i.ibb.co/HJY8jVL/file-000000001f50820aa73aeb0bb2fa1902.png";
+container.addEventListener("click", function () {
+    this.classList.toggle("change");
 
-const image2 =
-"https://i.ibb.co/hJZjgfn6/file-00000000ced88210a9ad9ee381c6efb0.png";
-
-const image =
-document.getElementById("mainImage");
-
-const container =
-document.getElementById("imageContainer");
-
-let secondImage = false;
-
-
-container.addEventListener("click", function() {
-
-    image.classList.add("changing");
-
-    setTimeout(function() {
-
-        if (secondImage === false) {
-
-            image.src = image2;
-            secondImage = true;
-
-        } else {
-
-            image.src = image1;
-            secondImage = false;
-
-        }
-
-        image.classList.remove("changing");
-
-    }, 180);
-
+    // إزالة التركيز حتى لا يظهر أي مربع أزرق
+    this.blur();
 });
-
 </script>
 
-
-<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));}</script>
 </body>
 </html>
